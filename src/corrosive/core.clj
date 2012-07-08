@@ -71,7 +71,7 @@
 (defn- game-update
   "Update game using current delta time."
   [timer delta]
-  (swap! *rotation* #($ % + delta * 0.15))
+  ;(swap! *rotation* #($ % + delta * 0.15))
 
   (if (Keyboard/isKeyDown Keyboard/KEY_LEFT)
     (swap! *x* #($ % - 0.35 * delta)))
@@ -80,10 +80,10 @@
     (swap! *x* #($ % + 0.35 * delta)))
 
   (if (Keyboard/isKeyDown Keyboard/KEY_UP)
-    (swap! *y* #($ % - 0.35 * delta)))
+    (swap! *y* #($ % + 0.35 * delta)))
   
   (if (Keyboard/isKeyDown Keyboard/KEY_DOWN)
-    (swap! *y* #($ % + 0.35 * delta)))
+    (swap! *y* #($ % - 0.35 * delta)))
 
   ;; keep it on screen
   (if (< @*x* 0)   (reset! *x* 0))
@@ -97,10 +97,9 @@
 (defn game-main
   "Main entry point for game."
   []
-(with-thread
-  (let [w     800
-        h     600
-        timer (timer/create)]
+  (let [w  800
+        h  600
+        tm (timer/create)]
 
     (Display/setDisplayMode (DisplayMode. w h))
     (Display/create)
@@ -109,11 +108,11 @@
     (init-gl w h)
 
     (while-not (Display/isCloseRequested)
-      (game-update timer (timer/get-delta timer))
+      ;(println (timer/get-delta timer))
+      (game-update tm (timer/get-delta tm))
       (render-gl)
 
       (Display/update)
       (Display/sync 60))
-
     (Display/destroy)
-) ) )
+) )

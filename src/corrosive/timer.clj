@@ -1,6 +1,7 @@
 (ns corrosive.timer
   "Timing related code."
-  (:import [org.lwjgl Sys]))
+  (:import [org.lwjgl Sys])
+  (:use corrosive.infix))
 
 (defprotocol ITimer
   (set-fps        [this f])
@@ -24,10 +25,9 @@
 (defn get-time
   "Return accurate current time in milliseconds."
   ^Long []
-  (long
     (/
       (* 1000 (Sys/getTime))
-      (Sys/getTimerResolution) )))
+      (Sys/getTimerResolution) ))
 
 (defn create
   "Initialize Timer."
@@ -39,7 +39,7 @@
   [^Timer timer]
   (let [time      (get-time)
         lastframe (get-last-frame timer)
-        delta     (int (- time lastframe))]
+        delta     (-> (- time lastframe) long)]
 
     (set-last-frame timer time)
     delta))
