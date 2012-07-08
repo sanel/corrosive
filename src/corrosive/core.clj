@@ -56,7 +56,7 @@
   ;; draw quad
   (gl-with-current-matrix
     (GL11/glTranslatef @*x* @*y* 0)
-    (GL11/glRotatef @*rotation* 0.0 0.0 1.0)
+    (GL11/glRotatef @*rotation* 0.0 0.0 0.0)
     (GL11/glTranslatef (- @*x*)
                        (- @*y*)
                        0)
@@ -71,7 +71,7 @@
 (defn- game-update
   "Update game using current delta time."
   [timer delta]
-  ;(swap! *rotation* #($ % + delta * 0.15))
+  (swap! *rotation* #($ % + delta * 3.5))
 
   (if (Keyboard/isKeyDown Keyboard/KEY_LEFT)
     (swap! *x* #($ % - 0.35 * delta)))
@@ -95,7 +95,7 @@
 )
 
 (defn game-main
-  "Main entry point for game."
+  "Main entry point for game. Can be run inside future."
   []
   (let [w  800
         h  600
@@ -108,7 +108,6 @@
     (init-gl w h)
 
     (while-not (Display/isCloseRequested)
-      ;(println (timer/get-delta timer))
       (game-update tm (timer/get-delta tm))
       (render-gl)
 
@@ -116,3 +115,6 @@
       (Display/sync 60))
     (Display/destroy)
 ) )
+
+;; eval this line to startup game
+(def *game-thread* (-> (game-main) future))
